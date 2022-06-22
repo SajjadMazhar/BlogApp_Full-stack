@@ -16,6 +16,7 @@ model User{
   email String @unique
   password String
   blogs Blog[]
+  verified Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -27,6 +28,7 @@ model Blog{
   images String[]
   likes Int @default(0)
   dislikes Int @default(0)
+  reactionerIds Int[]
   user User @relation(fields: [userId], references: [id])
   userId Int
   createdAt DateTime @default(now())

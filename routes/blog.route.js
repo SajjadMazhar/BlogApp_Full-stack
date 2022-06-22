@@ -33,6 +33,11 @@ router.delete("/post/:id", async(req, res)=>{
     })
     const id = parseInt(req.params.id)
     try {
+        await prisma.reaction.deleteMany({
+            where:{
+                blogId:id
+            }
+        })
         const blog = await prisma.blog.delete({
             where:{id}
         })
@@ -48,9 +53,43 @@ router.delete("/post/:id", async(req, res)=>{
 
 router.get("/post", async(req, res)=>{
     try {
-        const blogs = await prisma.blog.findMany()
+        const blogs = await prisma.blog.findMany({
+            orderBy:{
+                createdAt:"desc"
+            },
+            include:{
+                user:true
+            }
+        })
         res.status(200).json({
             status:"success", blogs
+        })
+    } catch (error) {
+        res.status(500).json({
+            status:"failed", error:error.message
+        })
+    }
+})
+
+router.patch("/post/:id", async(req, res)=>{
+    const id = parseInt(req.params.id)
+    const {title, content} = req.body
+    if(!(title&&content)){
+        return res.status(400).json({
+            status:"error", msg:"please enter title and content"
+        })
+    }
+    try {
+        const blog = await prisma.blog.update({
+            where:{
+                id
+            },
+            data:{
+                title, content
+            }
+        })
+        res.json({
+            status:"success", blog
         })
     } catch (error) {
         res.status(500).json({

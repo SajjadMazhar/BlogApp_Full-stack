@@ -1,5 +1,5 @@
 const { PrismaClient } = require("@prisma/client")
-const { updatingBlogReaction } = require("../services/reaction.services")
+const { updatingBlogReaction, popReactioner } = require("../services/reaction.services")
 const prisma = new PrismaClient()
 const router = require("express").Router()
 
@@ -14,7 +14,7 @@ router.post("/post/:blogId", async(req, res)=>{
                 userId:req.userValues.id
             }
         })
-        console.log(presentReaction)
+        // console.log(presentReaction)
         if(presentReaction.length === 0){
             reaction = await prisma.reaction.create({
                 data:{
@@ -22,7 +22,7 @@ router.post("/post/:blogId", async(req, res)=>{
                     blogId
                 }
             })
-            blog = await updatingBlogReaction(presentReaction, liked, disliked, blogId, reaction.id)
+            blog = await updatingBlogReaction(presentReaction, liked, disliked, blogId, reaction.id, req.userValues.id)
             return res.status(201).json({
                 status:"success", blog
             })
@@ -39,37 +39,14 @@ router.post("/post/:blogId", async(req, res)=>{
         if(disliked && presentReaction[0].liked){
             liked = false
         }
-        // reaction = await prisma.reaction.update({
-        //     where:{
-        //         id:presentReaction[0].id
-        //     },
-        //     data:{
-        //         liked, disliked
-        //     }
-        // })
-        // const likedCount = await prisma.reaction.findMany({
-        //     where:{
-        //       blogId,
-        //       liked:true
-        //     },
-        // })
-        // const dislikedCount = await prisma.reaction.findMany({
-        //     where:{
-        //       blogId,
-        //       disliked:true
-        //     },
-        // })
-        // const blog = await prisma.blog.update({
-        //     where:{
-        //         id:blogId
-        //     },
-        //     data:{
-        //         likes:likedCount.length,
-        //         dislikes:dislikedCount.length
-        //     }
-        // })
-        // console.log(likedCount.length)
-        blog = await updatingBlogReaction(presentReaction, liked, disliked, blogId)
+       
+        blog = await updatingBlogReaction(presentReaction, liked, disliked, blogId, null, req.userValues.id)
+        const checkReaction = await prisma.reaction.findMany({where:{blogId, userId:req.userValues.id}})
+        // console.log(checkReaction)
+        if(checkReaction[0] && !checkReaction[0].liked && !checkReaction[0].disliked){
+            await prisma.reaction.delete({where:{id:checkReaction[0].id}})
+            blog = await popReactioner(checkReaction[0].blogId, req.userValues.id)
+        }
         res.json({
             status:"success", blog
         })
