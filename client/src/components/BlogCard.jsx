@@ -31,7 +31,7 @@ const ExpandMore = styled((props) => {
 
 export default function BlogCard({blog}) {
   const [expanded, setExpanded] = React.useState(false);
-  const {isLiked, isDisliked, toggleIsLiked, toggleIsDisliked} = React.useContext(blogContext)
+  const { reactOnBlog} = React.useContext(blogContext)
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -68,12 +68,12 @@ export default function BlogCard({blog}) {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="like" onClick={()=>toggleIsLiked(prev=>prev?false:true)}>
-          {isLiked?<ThumbUpAltIcon />:<ThumbUpOffAltIcon />}
+        <IconButton aria-label="like" onClick={()=>reactOnBlog(blog.id, "liked")}>
+          {blog.liked?<ThumbUpAltIcon />:<ThumbUpOffAltIcon />}
           <Typography sx={{m:1}}>{blog.likes}</Typography>
         </IconButton>
-        <IconButton aria-label="dislike" onClick={()=>toggleIsDisliked(prev=>prev?false:true)}>
-        {isDisliked?<ThumbDownAltIcon/>:<ThumbDownOffAltIcon/>}
+        <IconButton aria-label="dislike" onClick={()=>reactOnBlog(blog.id, "disliked")}>
+        {blog.disliked?<ThumbDownAltIcon/>:<ThumbDownOffAltIcon/>}
         <Typography sx={{m:1}}>{blog.dislikes}</Typography>
 
         </IconButton>

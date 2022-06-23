@@ -49,7 +49,7 @@ const popReactioner = async(blogId, userId) =>{
             id:blogId
         }})
         let reactionerIds = reaction.reactionerIds
-        console.log(reactionerIds)
+        // console.log(reactionerIds)
         reactionerIds.splice(reactionerIds.indexOf(userId), 1)
         return await prisma.blog.update({
                     where:{

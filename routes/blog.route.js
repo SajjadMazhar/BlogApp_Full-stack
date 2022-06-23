@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client")
+const { verifyToken } = require("../middlewares/user.middleware")
 const prisma = new PrismaClient()
 
 const router = require("express").Router()
@@ -61,10 +62,17 @@ router.get("/post", async(req, res)=>{
                 user:true
             }
         })
+        const reactions = await prisma.reaction.findMany({
+            where:{
+                userId:req.userValues.id,
+            }
+        })
+        console.log(reactions)
         res.status(200).json({
-            status:"success", blogs
+            status:"success", blogs, userId:req.userValues.id, reactions
         })
     } catch (error) {
+        console.log(error.message)
         res.status(500).json({
             status:"failed", error:error.message
         })

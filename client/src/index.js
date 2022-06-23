@@ -3,12 +3,15 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import BlogState from './context/BlogState';
+import UserState from './context/UserState';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <BlogState>
-    <App />
-  </BlogState>
+  <UserState>
+    <BlogState>
+      <App />
+    </BlogState>
+  </UserState>
 );
 
 
