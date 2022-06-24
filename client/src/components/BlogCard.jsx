@@ -40,7 +40,7 @@ export default function BlogCard({blog}) {
   };
 
   return (
-    <Card sx={{ maxWidth: 745}} >
+    <Card sx={{ maxWidth: 525}} >
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -62,9 +62,9 @@ export default function BlogCard({blog}) {
       />
       <CardMedia
         component="img"
-        height="394"
+        height="374"
         image="https://img.freepik.com/free-photo/cool-geometric-triangular-figure-neon-laser-light-great-backgrounds-wallpapers_181624-9331.jpg?w=2000"
-        alt="Paella dish"
+        alt="blog_img"
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary" style={{fontWeight:"bolder"} }>

@@ -12,6 +12,7 @@ const BlogState = ({children}) => {
     const [editBlogInput, setEditBlogInput] = useState({blogTitle:"", Blog:""})
     const [editing, setEditing] = useState(false)
     const [updatingId, setUpdatingId] = useState(null)
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
     const navigate = useNavigate()
 
     // fetch all blogs
@@ -111,11 +112,13 @@ const BlogState = ({children}) => {
 
     useEffect(()=>{
         if(getFromLocal()){
+            setIsLoggedIn(true)
             fetchBlogs()
         }
         else{
             navigate("/login")
         }
+
         // eslint-disable-next-line
     },[])
 
