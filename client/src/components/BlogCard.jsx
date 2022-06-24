@@ -12,10 +12,11 @@ import Typography from '@mui/material/Typography';
 import { red } from '@mui/material/colors';
 import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import DeleteIcon from '@mui/icons-material/Delete';
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
+import EditIcon from '@mui/icons-material/Edit';
 import blogContext from '../context/BlogContext';
 
 const ExpandMore = styled((props) => {
@@ -31,7 +32,8 @@ const ExpandMore = styled((props) => {
 
 export default function BlogCard({blog}) {
   const [expanded, setExpanded] = React.useState(false);
-  const { reactOnBlog} = React.useContext(blogContext)
+  const { reactOnBlog, toggleEditing, deleteBlog} = React.useContext(blogContext)
+
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -46,9 +48,14 @@ export default function BlogCard({blog}) {
           </Avatar>
         }
         action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
+          <>
+          <IconButton aria-label="delete" onClick={()=>deleteBlog(blog.id)}>
+            <DeleteIcon />
           </IconButton>
+          <IconButton aria-label="edit" onClick={()=>toggleEditing(blog.id)}>
+            <EditIcon />
+          </IconButton>
+          </>
         }
         title={blog.user.name}
         subheader={new Date(blog.updatedAt).toDateString()}

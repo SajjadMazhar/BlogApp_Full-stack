@@ -1,25 +1,34 @@
-import React, {useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
+import { useNavigate } from 'react-router-dom'
 import blogContext from './BlogContext'
+import userContext from './UserContext'
 
-const host="http://localhost:3000/"
 const BlogState = ({children}) => {
+    const {getFromLocal} = useContext(userContext)
     const [blogs, setBlogs] = useState([])
     const [isLiked, toggleIsLiked] = useState(false)
     const [isDisliked, toggleIsDisliked] = useState(false)
+    const [blogInput, setBlogInput] = useState({blogTitle:"", blog:""})
+    const [editBlogInput, setEditBlogInput] = useState({blogTitle:"", Blog:""})
+    const [editing, setEditing] = useState(false)
+    const [updatingId, setUpdatingId] = useState(null)
+    const navigate = useNavigate()
 
     // fetch all blogs
     const fetchBlogs = async ()=>{
-        const resp = await fetch(host+"blog/post", {
+        const token = getFromLocal()
+        const resp = await fetch("/blog/post", {
             method:"GET",
             headers:{
                 "Content-Type":"application/json",
-                "authorization":"bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwibmFtZSI6ImtoYWphIiwiZW1haWwiOiJraGFqYUBnbWFpbC5jb20iLCJpYXQiOjE2NTU5NTYzOTAsImV4cCI6MTY1NjA0Mjc5MH0.firwr5HUTnLXk0ebf38SQR9Aaw58eACqHVHUX1oueag"
+                "authorization":"bearer "+token
             }
         })
-        const data = await resp.json()
+        const data = await resp.json();
+        // console.log(data)
         const userId = data.userId
         const reactions = data.reactions
-        console.log(reactions)
+        
         const blogData = data.blogs.map(blog=>{
             for(let react of reactions){
                 if(blog.reactionerIds.includes(userId) && react.blogId===blog.id){
@@ -35,32 +44,79 @@ const BlogState = ({children}) => {
         setBlogs(blogData)
     }
 
-    const reactOnBlog = async(blogId, reaction)=>{
-        await fetch(host+"reaction/post/"+blogId, {
+    const handleOnPostBlog = async()=>{
+        const token = getFromLocal()
+        await fetch("/blog/post", {
             method:"POST", 
             headers:{
                 "Content-Type":"application/json",
-                "authorization":"bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwibmFtZSI6ImtoYWphIiwiZW1haWwiOiJraGFqYUBnbWFpbC5jb20iLCJpYXQiOjE2NTU5NTYzOTAsImV4cCI6MTY1NjA0Mjc5MH0.firwr5HUTnLXk0ebf38SQR9Aaw58eACqHVHUX1oueag"
+                "authorization":"bearer "+token
+            },
+            body:JSON.stringify({title:blogInput.blogTitle, content:blogInput.blog})
+        })
+        navigate("/")
+        fetchBlogs()
+
+    }
+
+    const toggleEditing = (id)=>{
+        setEditing(prev=> prev?false:true)
+        const blog = blogs.find(blog=> (blog.id===id))
+        setUpdatingId(id)
+        console.log(blog)
+        setEditBlogInput({blogTitle:blog.title, blog:blog.content})
+    }
+
+    const handleOnUpdate = async()=>{
+        const token = getFromLocal()
+        await fetch("/blog/post/"+updatingId, {
+            method:"PATCH",
+            headers:{
+                "Content-Type":"application/json",
+                "authorization":"bearer "+token
+            },
+            body:JSON.stringify({title:editBlogInput.blogTitle, content:editBlogInput.blog})
+        })
+        setEditing(false)
+        fetchBlogs()
+        
+    }
+
+    const deleteBlog = async(id)=>{
+        const token = getFromLocal()
+        await fetch("/blog/post/"+id, {
+            method:"DELETE",
+            headers:{
+                "Content-Type":"application/json",
+                "authorization":"bearer "+token
+            }
+        })
+        fetchBlogs()
+    }
+
+    const reactOnBlog = async(blogId, reaction)=>{
+        const token = getFromLocal()
+        await fetch("/reaction/post/"+blogId, {
+            method:"POST", 
+            headers:{
+                "Content-Type":"application/json",
+                "authorization":"bearer "+token
             },
             body:JSON.stringify({[reaction]:true})
         })
         fetchBlogs()
     }
 
-    const createABlog = async()=>{
-        await fetch(host+"blog/post/", {
-            method:"POST", 
-            headers:{
-                "Content-Type":"application/json",
-                "authorization":"bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwibmFtZSI6ImtoYWphIiwiZW1haWwiOiJraGFqYUBnbWFpbC5jb20iLCJpYXQiOjE2NTU5NTYzOTAsImV4cCI6MTY1NjA0Mjc5MH0.firwr5HUTnLXk0ebf38SQR9Aaw58eACqHVHUX1oueag"
-            },
-            body:JSON.stringify({title:"Navgurukul", content:"An NGO that provides tech courses to the students who can't afford higher studies"})
-        })
-        fetchBlogs()
-    }
+
 
     useEffect(()=>{
-        fetchBlogs()
+        if(getFromLocal()){
+            fetchBlogs()
+        }
+        else{
+            navigate("/login")
+        }
+        // eslint-disable-next-line
     },[])
 
     const values = {
@@ -70,7 +126,17 @@ const BlogState = ({children}) => {
         toggleIsDisliked,
         toggleIsLiked,
         reactOnBlog,
-        createABlog
+        blogInput,
+        setBlogInput,
+        handleOnPostBlog,
+        editing,
+        setEditing,
+        editBlogInput,
+        setEditBlogInput,
+        handleOnUpdate,
+        toggleEditing,
+        deleteBlog
+        
     }
 
   return (
