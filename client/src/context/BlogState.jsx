@@ -1,10 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react'
-import { useNavigate } from 'react-router-dom'
 import blogContext from './BlogContext'
 import userContext from './UserContext'
 
 const BlogState = ({children}) => {
-    const {getFromLocal} = useContext(userContext)
+    const {getFromLocal, navigate, setIsLoggedIn} = useContext(userContext)
     const [blogs, setBlogs] = useState([])
     const [isLiked, toggleIsLiked] = useState(false)
     const [isDisliked, toggleIsDisliked] = useState(false)
@@ -12,8 +11,7 @@ const BlogState = ({children}) => {
     const [editBlogInput, setEditBlogInput] = useState({blogTitle:"", Blog:""})
     const [editing, setEditing] = useState(false)
     const [updatingId, setUpdatingId] = useState(null)
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
 
     // fetch all blogs
     const fetchBlogs = async ()=>{
@@ -112,15 +110,18 @@ const BlogState = ({children}) => {
 
     useEffect(()=>{
         if(getFromLocal()){
+            if(['/login','/signup'].includes(window.location.pathname)){
+                navigate("/")
+            }
             setIsLoggedIn(true)
             fetchBlogs()
         }
-        else{
+        else if(!getFromLocal() && ['/', '/newblog', '/yblogs', '/saved', '/profile', '/trash'].includes(window.location.pathname)){
+            setIsLoggedIn(false)
             navigate("/login")
         }
-
         // eslint-disable-next-line
-    },[])
+    },[navigate, setIsLoggedIn])
 
     const values = {
         blogs,
@@ -138,7 +139,7 @@ const BlogState = ({children}) => {
         setEditBlogInput,
         handleOnUpdate,
         toggleEditing,
-        deleteBlog
+        deleteBlog,
         
     }
 

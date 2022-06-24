@@ -38,8 +38,9 @@ router.post("/signup", async(req, res)=>{
   }
 })
 
-router.post("/verify", async(req, res)=>{
-  const {userId, otp} = req.body
+router.post("/verify", verifyToken, async(req, res)=>{
+  const {otp} = req.body
+  const userId = req.userValues.id
   try {
     const user = await prisma.user.findUnique({where:{id:userId}})
     const cacheOtp = await client.get(userId.toString())

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Blog" ADD COLUMN     "saved" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "trashed" BOOLEAN NOT NULL DEFAULT false;

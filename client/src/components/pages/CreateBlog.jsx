@@ -1,4 +1,4 @@
-import { Stack, TextField, Button } from '@mui/material'
+import { Stack, TextField, Button, Typography } from '@mui/material'
 import React, { useContext } from 'react'
 import blogContext from '../../context/BlogContext'
 
@@ -7,6 +7,7 @@ const CreateBlog = () => {
     
   return (
     <Stack style={{width:"40vw"}} spacing={4}>
+      <Typography variant="h4">Post...</Typography>
       <TextField
           id="outlined-textarea-title"
           label="Blog Title"

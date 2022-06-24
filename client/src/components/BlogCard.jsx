@@ -44,7 +44,7 @@ export default function BlogCard({blog}) {
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
+            {blog.user.name.substr(0,1).toUpperCase()}
           </Avatar>
         }
         action={

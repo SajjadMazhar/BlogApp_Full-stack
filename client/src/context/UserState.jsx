@@ -1,8 +1,15 @@
+import { TokenTwoTone } from '@mui/icons-material';
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import userContext from './UserContext'
 
 const UserState = ({children}) => {
-    const [loginInput, setLoginInput] = useState({email:"", password:""})
+    const [loginInput, setLoginInput] = useState({email:"", password:""});
+    const [registerInput, setRegisterInput] = useState({name:"", email:"", password:""})
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [otp, setOtp] = useState("")
+
+    const navigate = useNavigate()
 
     // localstorage functions
     const setToLocal = (token)=>{
@@ -10,6 +17,37 @@ const UserState = ({children}) => {
     }
     const getFromLocal = ()=>{
         return localStorage.getItem("authToken")
+    }
+
+    const handleOnSignup = async()=>{
+        const resp = await fetch("/user/signup", {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(registerInput)
+        })
+        const data = await resp.json()
+        if(data.status==='created'){
+            setIsLoggedIn(true)
+            localStorage.setItem("authToken", data.token)
+        }
+    }
+
+    const handleOnVerifyOtp = async()=>{
+        const token = localStorage.getItem("authToken")
+        const resp = await fetch("/user/verify", {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "authorization":"bearer "+token
+            },
+            body:JSON.stringify({otp})
+        })
+        const data = await resp.json()
+        if(data.verified){
+            navigate("/")
+        }
     }
 
     const handleLogin = async()=>{
@@ -22,14 +60,31 @@ const UserState = ({children}) => {
         })
         const userData = await resp.json()
         setToLocal(userData.token)
+        setLoginInput({email:"", password:""})
+        navigate("/")
 
+    }
+    const handleOnLogout = ()=>{
+        localStorage.removeItem("authToken")
+        
+        navigate("/login")
     }
 
     const values={
         loginInput,
         setLoginInput,
         handleLogin,
-        getFromLocal
+        getFromLocal,
+        handleOnLogout,
+        isLoggedIn,
+        setIsLoggedIn,
+        registerInput, 
+        setRegisterInput,
+        handleOnSignup,
+        otp,
+        setOtp,
+        handleOnVerifyOtp,
+        navigate
     }
   return (
     <userContext.Provider value={values}>

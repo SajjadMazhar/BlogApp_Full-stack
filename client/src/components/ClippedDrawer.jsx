@@ -12,88 +12,107 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import PostAddIcon from '@mui/icons-material/PostAdd';
+import DynamicFeedIcon from '@mui/icons-material/DynamicFeed';
+import StarOutlineIcon from '@mui/icons-material/StarOutline';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import FolderDeleteIcon from '@mui/icons-material/FolderDelete';
+import LogoutIcon from '@mui/icons-material/Logout';
+import LoginIcon from '@mui/icons-material/Login';
+import {
+  Routes, Route, Link
+} from 'react-router-dom'
+import Home from './pages/Home';
+import Login from './pages/Login';
+import CreateBlog from './pages/CreateBlog';
+import userContext from '../context/UserContext';
+import blogContext from '../context/BlogContext';
+import SignUp from './pages/SignUp';
 
 const drawerWidth = 240;
 
 export default function ClippedDrawer() {
+  const {handleOnLogout, isLoggedIn} = React.useContext(userContext)
   return (
     <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <Toolbar>
-          <Typography variant="h6" noWrap component="div">
-            Clipped drawer
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
-          <List>
-            {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-              <ListItem key={text} disablePadding>
+    <CssBaseline />
+    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+      <Toolbar>
+        <Typography variant="h6" noWrap component="div">
+          TechBook
+        </Typography>
+      </Toolbar>
+    </AppBar>
+    <Drawer
+      variant="permanent"
+      sx={{
+        width: drawerWidth,
+        flexShrink: 0,
+        [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+      }}
+    >
+      <Toolbar />
+      <Box sx={{ overflow: 'auto' }}>
+        <List>
+          {[['Blogs', '/', <DynamicFeedIcon />], ['Post Blog', '/newblog', <PostAddIcon />], ['Your Blogs', '/yblogs', <InboxIcon />], ['Saved', '/saved', <StarOutlineIcon />]].map((text) => (
+            <Link to={text[1]} key={text[0]} style={{textDecoration:"none", color:"#666666"}}>
+              <ListItem  disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                    {text[2]}
                   </ListItemIcon>
-                  <ListItemText primary={text} />
+                  <ListItemText primary={text[0]} />
                 </ListItemButton>
               </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <List>
-            {['All mail', 'Trash', 'Spam'].map((text, index) => (
-              <ListItem key={text} disablePadding>
+            </Link>
+          ))}
+        </List>
+        <Divider />
+        <List>
+          {[['Profile','/profile', <AccountCircleIcon/>], ['Trash', '/trash', <FolderDeleteIcon/>]].map((text) => (
+            <Link to={text[1]} key={text[0]} style={{textDecoration:"none", color:"#666666"}}>
+              <ListItem disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                    {text[2]}
                   </ListItemIcon>
-                  <ListItemText primary={text} />
+                  <ListItemText primary={text[0]} />
                 </ListItemButton>
               </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
-        <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-          enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-          imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
-          Convallis convallis tellus id interdum velit laoreet id donec ultrices.
-          Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-          adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
-          nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
-          leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
-          feugiat vivamus at augue. At augue eget arcu dictum varius duis at
-          consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-          sapien faucibus et molestie ac.
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper
-          eget nulla facilisi etiam dignissim diam. Pulvinar elementum integer enim
-          neque volutpat ac tincidunt. Ornare suspendisse sed nisi lacus sed viverra
-          tellus. Purus sit amet volutpat consequat mauris. Elementum eu facilisis
-          sed odio morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi
-          tincidunt ornare massa eget egestas purus viverra accumsan in. In hendrerit
-          gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem
-          et tortor. Habitant morbi tristique senectus et. Adipiscing elit duis
-          tristique sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-          eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-          posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
+            </Link>
+          ))}
+          <ListItem disablePadding onClick={handleOnLogout}>
+            {
+              isLoggedIn?
+              <ListItemButton>
+                <ListItemIcon>
+                  <LogoutIcon />
+                </ListItemIcon>
+                <ListItemText primary="Logout" />
+              </ListItemButton>:
+                <ListItemButton>
+                <ListItemIcon>
+                  <LoginIcon />
+                </ListItemIcon>
+                <ListItemText primary="Login" />
+              </ListItemButton>
+            }
+
+          </ListItem>
+        </List>
       </Box>
+    </Drawer>
+    <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Toolbar />
+      <div className="App">
+              <Routes>
+                <Route path="/" element={<Home/>} />
+                <Route path="/login" element={<Login/>} />
+                <Route path="/signup" element={<SignUp/>} />
+                <Route path="/newblog" element={<CreateBlog/>} />
+              </Routes>
+      </div>
     </Box>
+  </Box>    
   );
 }
