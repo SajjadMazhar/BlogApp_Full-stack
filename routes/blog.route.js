@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client")
-const { verifyToken } = require("../middlewares/user.middleware")
 const prisma = new PrismaClient()
+const { verifyToken, confirmSelf } = require("../middlewares/user.middleware")
 
 const router = require("express").Router()
 
@@ -28,7 +28,7 @@ router.post("/post", async(req, res)=>{
     }
 })
 
-router.delete("/post/:id", async(req, res)=>{
+router.delete("/post/:id", confirmSelf, async(req, res)=>{
     if(!(req.params.id)) return res.status(400).json({
         status:"error", msg:"id must be provided"
     })
@@ -67,15 +67,24 @@ router.get("/post", async(req, res)=>{
                 userId:req.userValues.id,
             }
         })
-        console.log(reactions)
         res.status(200).json({
             status:"success", blogs, userId:req.userValues.id, reactions
         })
     } catch (error) {
-        console.log(error.message)
         res.status(500).json({
             status:"failed", error:error.message
         })
+    }
+})
+
+router.post("/save/:id", async(req, res)=>{
+    const id = parseInt(req.params.id)
+    try {
+        const blog = await prisma.blog.findUnique({where:{id}})
+        const updatedBlog = await prisma.blog.update({where:{id}, data:{saved:blog.saved?false:true}})
+        res.json({status:"success", blog:updatedBlog})
+    } catch (error) {
+        res.status(500).json({status:"failed", error:error.message})
     }
 })
 

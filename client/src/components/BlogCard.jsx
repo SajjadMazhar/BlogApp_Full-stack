@@ -18,6 +18,11 @@ import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import ThumbDownOffAltIcon from '@mui/icons-material/ThumbDownOffAlt';
 import EditIcon from '@mui/icons-material/Edit';
 import blogContext from '../context/BlogContext';
+import userContext from '../context/UserContext';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import StarIcon from '@mui/icons-material/Star';
+import { Button, Stack, TextField } from '@mui/material';
+import Comment from './Comment';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -32,7 +37,8 @@ const ExpandMore = styled((props) => {
 
 export default function BlogCard({blog}) {
   const [expanded, setExpanded] = React.useState(false);
-  const { reactOnBlog, toggleEditing, deleteBlog} = React.useContext(blogContext)
+  const { reactOnBlog, toggleEditing, deleteBlog, toggleSaveBlog, commentInput, setCommentInput, handleOnComment} = React.useContext(blogContext)
+  const {userDetails} = React.useContext(userContext)
 
 
   const handleExpandClick = () => {
@@ -49,16 +55,30 @@ export default function BlogCard({blog}) {
         }
         action={
           <>
-          <IconButton aria-label="delete" onClick={()=>deleteBlog(blog.id)}>
-            <DeleteIcon />
+          {userDetails.id === blog.userId?
+          <>
+          <IconButton aria-label="delete" onClick={()=>deleteBlog(blog.id, blog.userId)}>
+            <DeleteIcon color="error"/>
           </IconButton>
           <IconButton aria-label="edit" onClick={()=>toggleEditing(blog.id)}>
-            <EditIcon />
+            <EditIcon color="primary" />
           </IconButton>
+          </>
+          :""
+          }
+          {
+            blog.saved?
+            <IconButton aria-label="saved" onClick={()=>toggleSaveBlog(blog.id)}>
+              <StarIcon color="warning" />
+            </IconButton>:
+            <IconButton aria-label="unsaved" onClick={()=>toggleSaveBlog(blog.id)}>
+              <StarBorderIcon color="warning" />
+            </IconButton>
+          }
           </>
         }
         title={blog.user.name}
-        subheader={new Date(blog.updatedAt).toDateString()}
+        subheader={new Date(blog.createdAt).toDateString()}
       />
       <CardMedia
         component="img"
@@ -95,10 +115,22 @@ export default function BlogCard({blog}) {
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          {/* <Typography> */}
-          {/* {blog.content} */}
-          <input/>
-          {/* </Typography> */}
+          <Stack direction="row" spacing={2}>
+            <TextField 
+              variant="filled"
+              fullWidth
+              label="Your Comment"
+              size="small"
+              value={commentInput}
+              onChange={(e)=>setCommentInput(e.target.value)}
+            />
+            <Button variant='outlined' onClick={()=>handleOnComment(blog.id)}>Comment</Button>
+          </Stack>
+          <br/>
+          <hr/>
+          <Stack>
+            <Comment/>
+          </Stack>
         </CardContent>
       </Collapse>
     </Card>

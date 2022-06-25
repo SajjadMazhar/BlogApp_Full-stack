@@ -1,4 +1,3 @@
-import { TokenTwoTone } from '@mui/icons-material';
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import userContext from './UserContext'
@@ -8,6 +7,7 @@ const UserState = ({children}) => {
     const [registerInput, setRegisterInput] = useState({name:"", email:"", password:""})
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [otp, setOtp] = useState("")
+    const [userDetails, setUserDetails] = useState({})
 
     const navigate = useNavigate()
 
@@ -64,9 +64,23 @@ const UserState = ({children}) => {
         navigate("/")
 
     }
+
+    const fetchUser = async()=>{
+        const token = getFromLocal()
+        const resp = await fetch("/user", {
+            method:"GET",
+            headers:{
+                "Content-Type":"application/json",
+                "authorization":"bearer "+token
+            }
+        })
+        const userData = await resp.json()
+        setUserDetails(userData)
+    }
+
     const handleOnLogout = ()=>{
         localStorage.removeItem("authToken")
-        
+        setIsLoggedIn(false)
         navigate("/login")
     }
 
@@ -84,7 +98,9 @@ const UserState = ({children}) => {
         otp,
         setOtp,
         handleOnVerifyOtp,
-        navigate
+        navigate,
+        userDetails,
+        fetchUser
     }
   return (
     <userContext.Provider value={values}>

@@ -106,8 +106,12 @@ router.post("/signin", async (req, res)=>{
   }
 })
 
-router.get("/protected",async (req,res)=>{
-  const users= await prisma.user.findMany()
-  res.json(users)
+router.get("/", verifyToken,async (req,res)=>{
+  try {
+    const user = await prisma.user.findUnique({where:{id:req.userValues.id}})
+    res.json(user)
+  } catch (error) {
+    res.status(500).json({status:"failed", error:error.message})
+  }
 })
 module.exports = router;

@@ -28,6 +28,8 @@ import CreateBlog from './pages/CreateBlog';
 import userContext from '../context/UserContext';
 import blogContext from '../context/BlogContext';
 import SignUp from './pages/SignUp';
+import Saved from './pages/Saved';
+import MyBlogs from './pages/MyBlogs';
 
 const drawerWidth = 240;
 
@@ -110,6 +112,8 @@ export default function ClippedDrawer() {
                 <Route path="/login" element={<Login/>} />
                 <Route path="/signup" element={<SignUp/>} />
                 <Route path="/newblog" element={<CreateBlog/>} />
+                <Route path="/saved" element={<Saved/>} />
+                <Route path="/yblogs" element={<MyBlogs/>} />
               </Routes>
       </div>
     </Box>

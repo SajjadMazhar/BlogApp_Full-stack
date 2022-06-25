@@ -3,15 +3,16 @@ import blogContext from './BlogContext'
 import userContext from './UserContext'
 
 const BlogState = ({children}) => {
-    const {getFromLocal, navigate, setIsLoggedIn} = useContext(userContext)
+    const {getFromLocal, navigate, setIsLoggedIn, fetchUser, userDetails} = useContext(userContext)
     const [blogs, setBlogs] = useState([])
+    const [comments, setComments] = useState([])
     const [isLiked, toggleIsLiked] = useState(false)
     const [isDisliked, toggleIsDisliked] = useState(false)
     const [blogInput, setBlogInput] = useState({blogTitle:"", blog:""})
     const [editBlogInput, setEditBlogInput] = useState({blogTitle:"", Blog:""})
     const [editing, setEditing] = useState(false)
     const [updatingId, setUpdatingId] = useState(null)
-    // const navigate = useNavigate()
+    const [commentInput, setCommentInput] = useState("")
 
     // fetch all blogs
     const fetchBlogs = async ()=>{
@@ -43,6 +44,9 @@ const BlogState = ({children}) => {
         setBlogs(blogData)
     }
 
+    const fetchComments = async()=>{
+        // to be continued
+    }
     const handleOnPostBlog = async()=>{
         const token = getFromLocal()
         await fetch("/blog/post", {
@@ -81,16 +85,36 @@ const BlogState = ({children}) => {
         
     }
 
-    const deleteBlog = async(id)=>{
+    const deleteBlog = async(id, userId)=>{
+        if(userId !== userDetails.id) return;
+        console.log(id, userDetails.id)
         const token = getFromLocal()
-        await fetch("/blog/post/"+id, {
+        const resp = await fetch("/blog/post/"+id, {
             method:"DELETE",
             headers:{
                 "Content-Type":"application/json",
                 "authorization":"bearer "+token
             }
         })
+        const {status} = await resp.json()
+        if(status !== "success"){
+            return
+        }
         fetchBlogs()
+    }
+
+
+    const toggleSaveBlog = async(id)=>{
+        const token = getFromLocal()
+        const resp = await fetch("/blog/save/"+id, {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json",
+                "authorization":"bearer "+token
+            }
+        })
+        fetchBlogs()
+        return
     }
 
     const reactOnBlog = async(blogId, reaction)=>{
@@ -106,6 +130,21 @@ const BlogState = ({children}) => {
         fetchBlogs()
     }
 
+    const handleOnComment = async(blogId)=>{
+        const token = getFromLocal()
+        const resp = await fetch("/comment"+blogId, {
+            method:"POST", 
+            headers:{
+                "Content-Type":"application/json",
+                "authorization":"bearer "+token
+            },
+            body:JSON.stringify({comment:commentInput})
+        })
+        const comment = await resp.json()
+        if(comment.status !== 'created') return;
+        fetchComments()
+    }
+
 
 
     useEffect(()=>{
@@ -114,6 +153,7 @@ const BlogState = ({children}) => {
                 navigate("/")
             }
             setIsLoggedIn(true)
+            fetchUser()
             fetchBlogs()
         }
         else if(!getFromLocal() && ['/', '/newblog', '/yblogs', '/saved', '/profile', '/trash'].includes(window.location.pathname)){
@@ -140,7 +180,10 @@ const BlogState = ({children}) => {
         handleOnUpdate,
         toggleEditing,
         deleteBlog,
-        
+        toggleSaveBlog,
+        commentInput,
+        setCommentInput,
+        handleOnComment
     }
 
   return (

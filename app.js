@@ -18,6 +18,7 @@ app.get('/', async (req, res, next) => {
 app.use('/user', require('./routes/user.route'));
 app.use('/blog', verifyToken, require('./routes/blog.route'));
 app.use('/reaction',verifyToken, require('./routes/reaction.route'));
+app.use('/comment', verifyToken, require('./routes/comment.route'))
 
 app.use((req, res, next) => {
   next(createError.NotFound());

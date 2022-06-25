@@ -33,6 +33,7 @@ const Login = () => {
           label="Password"
           placeholder="Enter your passoword..."
           type="password"
+          value={loginInput.password}
           onChange={(e)=> setLoginInput(prev=> ({...prev, password:e.target.value}))}
         />
         <Button variant="contained" size='large' onClick={handleLogin}>
