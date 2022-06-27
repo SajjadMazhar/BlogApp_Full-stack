@@ -1,6 +1,5 @@
-import { Avatar, Button, ButtonGroup, ListItem, ListItemAvatar, ListItemText, Stack, Typography } from '@mui/material'
-import React, { useContext } from 'react'
-import blogContext from '../context/BlogContext'
+import { Avatar, Button, ListItem, ListItemAvatar, ListItemText, Stack, Typography } from '@mui/material'
+import React from 'react'
 
 const Comment = ({comment}) => {
   return (

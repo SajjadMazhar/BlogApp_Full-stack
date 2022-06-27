@@ -19,7 +19,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FolderDeleteIcon from '@mui/icons-material/FolderDelete';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
-import HowToRegIcon from '@mui/icons-material/HowToReg';
 import {
   Routes, Route, Link
 } from 'react-router-dom'
@@ -31,11 +30,15 @@ import blogContext from '../context/BlogContext';
 import SignUp from './pages/SignUp';
 import Saved from './pages/Saved';
 import MyBlogs from './pages/MyBlogs';
+import { Input } from '@mui/material';
 
 const drawerWidth = 240;
 
 export default function ClippedDrawer() {
   const {handleOnLogout, isLoggedIn} = React.useContext(userContext)
+  const {setSearchInput} = React.useContext(blogContext)
+  
+
   return (
     <Box sx={{ display: 'flex' }}>
     <CssBaseline />
@@ -44,6 +47,13 @@ export default function ClippedDrawer() {
         <Typography variant="h6" noWrap component="div">
           TechBook
         </Typography>
+        <div style={{display:"flex", width:"80vw", justifyContent:"end"}}>
+          <Input
+            placeholder="Search..."
+            style={{color:"white"}}
+            onChange={(e)=>setSearchInput(e.target.value)}
+          />
+        </div>
       </Toolbar>
     </AppBar>
     <Drawer

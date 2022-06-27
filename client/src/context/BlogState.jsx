@@ -12,6 +12,7 @@ const BlogState = ({children}) => {
     const [editing, setEditing] = useState(false)
     const [updatingId, setUpdatingId] = useState(null)
     const [commentInput, setCommentInput] = useState("")
+    const [searchInput, setSearchInput] = React.useState("")
 
     // fetch all blogs
     const fetchBlogs = async ()=>{
@@ -44,17 +45,6 @@ const BlogState = ({children}) => {
         setBlogs(blogData)
     }
 
-    // const fetchComments = async()=>{
-    //     const resp =  await fetch("/comment", {
-    //         method:"GET", 
-    //         headers:{
-    //             "Content-Type":"application/json",
-    //             "authorization":"bearer "+token
-    //         }
-    //     })
-    //     const data = await resp.json();
-    //     setComments(data.comments)
-    // }
     const handleOnPostBlog = async()=>{
         const token = getFromLocal()
         console.log(blogInput)
@@ -125,7 +115,7 @@ const BlogState = ({children}) => {
 
     const toggleSaveBlog = async(id)=>{
         const token = getFromLocal()
-        const resp = await fetch("/blog/save/"+id, {
+        await fetch("/blog/save/"+id, {
             method:"POST",
             headers:{
                 "Content-Type":"application/json",
@@ -211,6 +201,8 @@ const BlogState = ({children}) => {
         commentInput,
         setCommentInput,
         handleOnComment,
+        setSearchInput,
+        searchInput
     }
 
   return (

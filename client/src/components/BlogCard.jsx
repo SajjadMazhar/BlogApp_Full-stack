@@ -46,7 +46,7 @@ export default function BlogCard({blog}) {
   };
 
   return (
-    <Card sx={{ maxWidth: 755}} >
+    <Card sx={{ width: 755}} >
       <CardHeader
         avatar={
           <Avatar src={"/profiles"+blog.user.dp} sx={{ bgcolor: red[500] }} aria-label="recipe">
