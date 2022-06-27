@@ -19,6 +19,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FolderDeleteIcon from '@mui/icons-material/FolderDelete';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
 import {
   Routes, Route, Link
 } from 'react-router-dom'
@@ -92,12 +93,15 @@ export default function ClippedDrawer() {
                 </ListItemIcon>
                 <ListItemText primary="Logout" />
               </ListItemButton>:
+              // <Link to="/login">
                 <ListItemButton>
-                <ListItemIcon>
-                  <LoginIcon />
-                </ListItemIcon>
-                <ListItemText primary="Login" />
-              </ListItemButton>
+                  <ListItemIcon>
+                    <LoginIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Login" />
+                </ListItemButton>
+              // </Link>
+
             }
 
           </ListItem>
@@ -106,7 +110,7 @@ export default function ClippedDrawer() {
     </Drawer>
     <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
       <Toolbar />
-      <div className="App">
+      <div className="App" style={{paddingTop:"2rem"}}>
               <Routes>
                 <Route path="/" element={<Home/>} />
                 <Route path="/login" element={<Login/>} />

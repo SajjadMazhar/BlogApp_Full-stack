@@ -1,15 +1,15 @@
-import { Avatar, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material'
+import { Avatar, Button, ButtonGroup, ListItem, ListItemAvatar, ListItemText, Stack, Typography } from '@mui/material'
 import React, { useContext } from 'react'
 import blogContext from '../context/BlogContext'
 
-const Comment = () => {
+const Comment = ({comment}) => {
   return (
     <ListItem alignItems="flex-start">
         <ListItemAvatar>
-          <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+          <Avatar alt="Remy Sharp" />
         </ListItemAvatar>
         <ListItemText
-          primary="Brunch this weekend?"
+          primary={comment.userName}
           secondary={
             <React.Fragment>
               <Typography
@@ -18,12 +18,17 @@ const Comment = () => {
                 variant="body2"
                 color="text.primary"
               >
-                Ali Connors
+                {comment.comment}
               </Typography>
-              {" — I'll be in your neighborhood doing errands this…"}
+              <br/>
+              {new Date(comment.createdAt).toDateString()}
+
             </React.Fragment>
           }
         />
+          <Stack style={{float:"right"}}>
+            <Button variant="outlined" style={{width:"76px", height:"35px", fontSize:"12px"}}>delete</Button>
+          </Stack>
       </ListItem>
   )
 }

@@ -4,7 +4,9 @@ import blogContext from '../../context/BlogContext'
 
 const CreateBlog = () => {
     const {blogInput, setBlogInput, handleOnPostBlog} = useContext(blogContext)
-    
+    // const test  = (d)=>{
+    //   setBlogInput(prev=>({...prev, images:Object.values(d)}))
+    // }
   return (
     <Stack style={{width:"40vw"}} spacing={4}>
       <Typography variant="h4">Post...</Typography>
@@ -26,10 +28,12 @@ const CreateBlog = () => {
           onChange={(e)=>setBlogInput(prev=>({...prev, blog:e.target.value}))}
           
         />
-        <TextField
+        <input
           id="outlined-textarea-img"
           type="file"
+          onChange={(e)=> setBlogInput(prev => ({...prev, images:e.target.files[0]}))}
           style={{width:"20vw"}}
+          
         />
         <Button variant="contained" size='large' onClick={handleOnPostBlog}>
             post

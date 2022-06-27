@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import userContext from './UserContext'
+import userContext from './UserContext';
+import axios from 'axios'
 
 const UserState = ({children}) => {
     const [loginInput, setLoginInput] = useState({email:"", password:""});
     const [registerInput, setRegisterInput] = useState({name:"", email:"", password:""})
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [otp, setOtp] = useState("")
-    const [userDetails, setUserDetails] = useState({})
+    const [userDetails, setUserDetails] = useState({id:null})
 
     const navigate = useNavigate()
 
@@ -20,17 +21,14 @@ const UserState = ({children}) => {
     }
 
     const handleOnSignup = async()=>{
-        const resp = await fetch("/user/signup", {
-            method:"POST",
+        const data = await axios.post("/user/signup", registerInput, {
             headers:{
-                "Content-Type":"application/json"
+                "Content-Type":"multipart/form-data"
             },
-            body:JSON.stringify(registerInput)
         })
-        const data = await resp.json()
-        if(data.status==='created'){
+        if(data.data.status==='created'){
             setIsLoggedIn(true)
-            localStorage.setItem("authToken", data.token)
+            localStorage.setItem("authToken", data.data.token)
         }
     }
 

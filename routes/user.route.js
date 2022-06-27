@@ -4,12 +4,15 @@ const prisma = new PrismaClient()
 const bcrypt = require("bcryptjs");
 const otpGenerator = require("otp-generator");
 const client = require('../database/redis');
+const { profileUpload } = require('../middlewares/multer.middleware');
 const { verifyToken } = require('../middlewares/user.middleware');
 const { mailOTP } = require('../services/otp.services');
 const { createToken } = require('../services/user.services');
 
-router.post("/signup", async(req, res)=>{
+router.post("/signup", profileUpload.single("dp"), async(req, res)=>{
   let {name, email, password} = req.body
+  // return console.log(req.file)
+
   const otp = otpGenerator.generate(6, {upperCaseAlphabets:false, lowerCaseAlphabets:false, specialChars:false})
   if(!(name&&email&&password)){
     return res.status(400).json({
@@ -22,7 +25,7 @@ router.post("/signup", async(req, res)=>{
     password = null
     const user = await prisma.user.create({
       data:{
-        name, email, password:hashedPassword
+        name, email, password:hashedPassword, dp:"/"+req.file.filename
       }
     })
     await client.setEx(user.id.toString(), 120, otp)
@@ -108,7 +111,7 @@ router.post("/signin", async (req, res)=>{
 
 router.get("/", verifyToken,async (req,res)=>{
   try {
-    const user = await prisma.user.findUnique({where:{id:req.userValues.id}})
+    const user = await prisma.user.findUnique({where:{id:req.userValues.id}, include:{comments:true}})
     res.json(user)
   } catch (error) {
     res.status(500).json({status:"failed", error:error.message})

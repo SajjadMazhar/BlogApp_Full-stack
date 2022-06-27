@@ -1,6 +1,7 @@
 import { Button, TextField, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useContext } from 'react'
+import { Link } from 'react-router-dom'
 import userContext from '../../context/UserContext'
 
 const Login = () => {
@@ -36,6 +37,7 @@ const Login = () => {
           value={loginInput.password}
           onChange={(e)=> setLoginInput(prev=> ({...prev, password:e.target.value}))}
         />
+        <Link style={{fontSize:"12px"}} to="/signup">don't have an account?</Link>
         <Button variant="contained" size='large' onClick={handleLogin}>
             LOGIN
         </Button>

@@ -7,7 +7,6 @@ import BlogCard from '../BlogCard'
 const MyBlogs = () => {
   const {blogs} = useContext(blogContext)
   const {userDetails} = useContext(userContext)
-  if(blogs.length !== 0) console.log(blogs);
   return (
     <Stack spacing={4}>
         {blogs.length !== 0?

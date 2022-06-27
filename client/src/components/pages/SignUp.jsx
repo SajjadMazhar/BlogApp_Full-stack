@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { Box, Typography, TextField, Button } from '@mui/material'
 import userContext from '../../context/UserContext'
+import { Link } from 'react-router-dom'
 
 const SignUp = () => {
     const {isLoggedIn, registerInput, setRegisterInput, handleOnSignup, handleOnVerifyOtp, otp, setOtp} = useContext(userContext)
@@ -12,6 +13,8 @@ const SignUp = () => {
             display: "flex",
             flexDirection:" column",
             justifyContent:"center",
+            marginTop:"5rem",
+            marginBottom:"10rem",
             gap:"2rem"
         }}
    >
@@ -58,7 +61,13 @@ const SignUp = () => {
                 value={registerInput.password}
                 onChange={(e)=> setRegisterInput(prev=> ({...prev, password:e.target.value}))}
                 />
+                <label>Upload your profile</label>
+                <TextField
+                type="file"
+                onChange={(e)=> setRegisterInput(prev=> ({...prev, dp:e.target.files[0]}))}
+                />
                 
+                <Link style={{fontSize:"12px"}} to="/login">Already have an account?</Link>
                 <Button variant="contained" size='large' onClick={handleOnSignup}>
                     Signup
                 </Button>

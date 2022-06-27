@@ -1,11 +1,17 @@
 const { PrismaClient } = require("@prisma/client")
+const {blogUpload} = require("../middlewares/multer.middleware")
 const prisma = new PrismaClient()
 const { verifyToken, confirmSelf } = require("../middlewares/user.middleware")
 
 const router = require("express").Router()
 
-router.post("/post", async(req, res)=>{
-    const {title, content, images } = req.body
+router.post("/post", blogUpload.single("images"), async(req, res)=>{
+    const {title, content} = req.body
+    console.log(req.file)
+    // const imgPaths = req.files.map(file=>{
+    //     return "/"+file.filename
+    // })
+    // return console.log(content)
     if(!(title&&content)){
         return res.status(400).json({
             status:"error", msg:"title and content is mandetory"
@@ -15,7 +21,7 @@ router.post("/post", async(req, res)=>{
     try {
         const blog = await prisma.blog.create({
             data:{
-                title, content, images, userId:req.userValues.id
+                title, content, images:"/"+req.file.filename, userId:req.userValues.id
             }
         })
         res.status(201).json({
@@ -59,7 +65,8 @@ router.get("/post", async(req, res)=>{
                 createdAt:"desc"
             },
             include:{
-                user:true
+                user:true,
+                comments:true
             }
         })
         const reactions = await prisma.reaction.findMany({

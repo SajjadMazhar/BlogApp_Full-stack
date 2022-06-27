@@ -2,10 +2,12 @@ const express = require('express');
 const createError = require('http-errors');
 const morgan = require('morgan');
 const { verifyToken } = require('./middlewares/user.middleware');
+const path = require("path")
 require('dotenv').config();
 
 const app = express();
 app.use(require("cors")())
+app.use(express.static(path.join(__dirname, "public")))
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(morgan('dev'));

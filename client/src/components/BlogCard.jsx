@@ -46,11 +46,12 @@ export default function BlogCard({blog}) {
   };
 
   return (
-    <Card sx={{ maxWidth: 525}} >
+    <Card sx={{ maxWidth: 755}} >
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            {blog.user.name.substr(0,1).toUpperCase()}
+          <Avatar src={"/profiles"+blog.user.dp} sx={{ bgcolor: red[500] }} aria-label="recipe">
+            {/* {blog.user.name.substr(0,1).toUpperCase()} */}
+            
           </Avatar>
         }
         action={
@@ -82,8 +83,8 @@ export default function BlogCard({blog}) {
       />
       <CardMedia
         component="img"
-        height="374"
-        image="https://img.freepik.com/free-photo/cool-geometric-triangular-figure-neon-laser-light-great-backgrounds-wallpapers_181624-9331.jpg?w=2000"
+        height="350"
+        image={"/blogposts"+blog.images[0]}
         alt="blog_img"
       />
       <CardContent>
@@ -129,7 +130,11 @@ export default function BlogCard({blog}) {
           <br/>
           <hr/>
           <Stack>
-            <Comment/>
+            {
+             blog.comments&& blog.comments.map((comment, id)=>(
+                <Comment comment={comment} key={id+"comment"}/>
+              )) 
+            }
           </Stack>
         </CardContent>
       </Collapse>
