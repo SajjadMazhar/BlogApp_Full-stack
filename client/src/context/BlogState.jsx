@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState} from 'react'
 import blogContext from './BlogContext'
 import userContext from './UserContext'
 import axios from 'axios'
+
 const BlogState = ({children}) => {
     const {getFromLocal, navigate, setIsLoggedIn, fetchUser, userDetails} = useContext(userContext)
     const [blogs, setBlogs] = useState([])
@@ -98,17 +99,30 @@ const BlogState = ({children}) => {
     const deleteBlog = async(id, userId)=>{
         if(userId !== userDetails.id) return;
         const token = getFromLocal()
-        const resp = await fetch("/blog/post/"+id, {
-            method:"DELETE",
+        const resp = await axios.delete("/blog/post/"+id, {
             headers:{
                 "Content-Type":"application/json",
                 "authorization":"bearer "+token
             }
         })
-        const {status} = await resp.json()
+        
+        const {status} = resp.data
         if(status !== "success"){
             return
         }
+        fetchBlogs()
+    }
+    const deleteComment = async(comId, userId)=>{
+        const token = getFromLocal()
+        if(userId !== userDetails.id){
+            return
+        }
+        await axios.delete(`/blog/comment/${comId}/${userId}`, {
+            headers:{
+                "Content-Type":"application/json",
+                "authorization":"bearer "+token
+            }
+        })
         fetchBlogs()
     }
 
@@ -202,7 +216,8 @@ const BlogState = ({children}) => {
         setCommentInput,
         handleOnComment,
         setSearchInput,
-        searchInput
+        searchInput,
+        deleteComment
     }
 
   return (

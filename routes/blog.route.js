@@ -122,4 +122,29 @@ router.patch("/post/:id", async(req, res)=>{
     }
 })
 
+router.delete("/comment/:comId/:userId", async(req, res)=>{
+    
+    const {comId, userId} = req.params
+    console.log(comId, userId)
+    if(req.userValues.id !== parseInt(userId)) return res.status(400).json({
+        status:"error", msg:"you are not allowed to delete"
+    })
+    try {
+        await prisma.comment.delete({
+            where:{
+                id:parseInt(comId)
+            }
+        })
+        res.json({
+            status:"success", msg:"deleted successfully"
+        })
+    } catch (error) {
+        res.status(500).json({
+            status:"failed", error:error.message
+        })
+    }
+    
+
+})
+
 module.exports = router

@@ -1,7 +1,9 @@
 import { Avatar, Button, ListItem, ListItemAvatar, ListItemText, Stack, Typography } from '@mui/material'
-import React from 'react'
+import React, { useContext } from 'react'
+import blogContext from '../context/BlogContext'
 
 const Comment = ({comment}) => {
+  const {deleteComment} = useContext(blogContext)
   return (
     <ListItem alignItems="flex-start">
         <ListItemAvatar>
@@ -26,7 +28,7 @@ const Comment = ({comment}) => {
           }
         />
           <Stack style={{float:"right"}}>
-            <Button variant="outlined" style={{width:"76px", height:"35px", fontSize:"12px"}}>delete</Button>
+            <Button onClick={()=>deleteComment(comment.id, comment.userId)} variant="outlined" style={{width:"76px", height:"35px", fontSize:"12px"}}>delete</Button>
           </Stack>
       </ListItem>
   )
