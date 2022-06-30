@@ -40,6 +40,20 @@ router.delete("/post/:id", confirmSelf, async(req, res)=>{
     })
     const id = parseInt(req.params.id)
     try {
+        const comments = await prisma.comment.findMany({
+            where:{
+                userId:req.userValues.id,
+                blogId:id
+            }
+        })
+        if(comments){
+            await prisma.comment.deleteMany({
+                where:{
+                    userId:req.userValues.id,
+                    blogId:id
+                }
+            })
+        }
         await prisma.reaction.deleteMany({
             where:{
                 blogId:id
@@ -130,6 +144,7 @@ router.delete("/comment/:comId/:userId", async(req, res)=>{
         status:"error", msg:"you are not allowed to delete"
     })
     try {
+
         await prisma.comment.delete({
             where:{
                 id:parseInt(comId)

@@ -23,7 +23,8 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
 import { Button, Stack, TextField } from '@mui/material';
 import Comment from './Comment';
-
+import axios from 'axios';
+ 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
   return <IconButton {...other} />;
@@ -37,9 +38,29 @@ const ExpandMore = styled((props) => {
 
 export default function BlogCard({blog}) {
   const [expanded, setExpanded] = React.useState(false);
-  const { reactOnBlog, toggleEditing, deleteBlog, toggleSaveBlog, commentInput, setCommentInput, handleOnComment} = React.useContext(blogContext)
+  const { reactOnBlog, toggleEditing, deleteBlog, toggleSaveBlog, sendDetails, getFromLocal, fetchBlogs} = React.useContext(blogContext)
   const {userDetails} = React.useContext(userContext)
+  const [commentInput, setCommentInput] = React.useState("")
+  const [readMore, toggleReadMore] = React.useState(false)
+  const handleOnComment = async(blogId)=>{
+    const token = getFromLocal()
+    try {
+        const resp = await axios.post("/comment/"+blogId, {comment:commentInput}, {
+          headers:{
+            "Content-Type":"application/json",
+            "authorization":"bearer "+token
+        }
+        })
+        const comment = await resp.data
+        if(comment.status !== 'created') return;
+        setCommentInput("")
+        fetchBlogs()
+        
+    } catch (error) {
+        console.log(error)
 
+    }
+}
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -92,7 +113,7 @@ export default function BlogCard({blog}) {
           {blog.title}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{my:1}}>
-          {blog.content}
+          {readMore?blog.content:blog.content.slice(0, 170) + "..."} <button style={{border:"none", borderBottom:"1px solid red", cursor:"pointer"}} onClick={()=>toggleReadMore(prev=>prev?false:true)}>{readMore? "read less" :"read more"}</button>
         </Typography>
       </CardContent>
       <CardActions disableSpacing>

@@ -12,7 +12,7 @@ const BlogState = ({children}) => {
     const [editBlogInput, setEditBlogInput] = useState({blogTitle:"", Blog:""})
     const [editing, setEditing] = useState(false)
     const [updatingId, setUpdatingId] = useState(null)
-    const [commentInput, setCommentInput] = useState("")
+    const [derivedComment, setDerivedComment] = useState("")
     const [searchInput, setSearchInput] = React.useState("")
 
     // fetch all blogs
@@ -58,14 +58,7 @@ const BlogState = ({children}) => {
                     "authorization":"bearer "+token
                 }
             })
-            // await fetch("/blog/post", {
-            //     method:"POST", 
-            //     headers:{
-            //         "Content-Type":"multipart/form-data",
-            //         "authorization":"bearer "+token
-            //     },
-            //     body:JSON.stringify({title:blogInput.blogTitle, content:blogInput.blog, images:blogInput.images})
-            // })
+           
             navigate("/")
             fetchBlogs()
         } catch (error) {
@@ -99,6 +92,7 @@ const BlogState = ({children}) => {
     const deleteBlog = async(id, userId)=>{
         if(userId !== userDetails.id) return;
         const token = getFromLocal()
+        console.log(id, userId)
         const resp = await axios.delete("/blog/post/"+id, {
             headers:{
                 "Content-Type":"application/json",
@@ -153,28 +147,27 @@ const BlogState = ({children}) => {
         fetchBlogs()
     }
 
-    const handleOnComment = async(blogId)=>{
-        const token = getFromLocal()
-        try {
-            const resp = await fetch("/comment/"+blogId, {
-                method:"POST", 
-                headers:{
-                    "Content-Type":"application/json",
-                    "authorization":"bearer "+token
-                },
-                body:JSON.stringify({comment:commentInput})
-            })
-            const comment = await resp.json()
-            if(comment.status !== 'created') return;
-            setCommentInput("")
-            fetchBlogs()
+    // const handleOnComment = async(blogId)=>{
+    //     const token = getFromLocal()
+    //     try {
+    //         const resp = await fetch("/comment/"+blogId, {
+    //             method:"POST", 
+    //             headers:{
+    //                 "Content-Type":"application/json",
+    //                 "authorization":"bearer "+token
+    //             },
+    //             body:JSON.stringify(derivedComment)
+    //         })
+    //         const comment = await resp.json()
+    //         if(comment.status !== 'created') return;
+    //         setCommentInput("")
+    //         fetchBlogs()
             
-        } catch (error) {
-            console.log(error)
+    //     } catch (error) {
+    //         console.log(error)
 
-        }
-    }
-
+    //     }
+    // }
 
 
     useEffect(()=>{
@@ -212,12 +205,16 @@ const BlogState = ({children}) => {
         toggleEditing,
         deleteBlog,
         toggleSaveBlog,
-        commentInput,
-        setCommentInput,
-        handleOnComment,
+        // commentInput,
+        // setCommentInput,
+        // handleOnComment,
         setSearchInput,
         searchInput,
-        deleteComment
+        deleteComment,
+        getFromLocal,
+        fetchBlogs
+      
+      
     }
 
   return (
