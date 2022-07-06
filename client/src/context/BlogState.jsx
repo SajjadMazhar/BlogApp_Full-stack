@@ -4,7 +4,7 @@ import userContext from './UserContext'
 import axios from 'axios'
 
 const BlogState = ({children}) => {
-    const {getFromLocal, navigate, setIsLoggedIn, fetchUser, userDetails} = useContext(userContext)
+    const {getFromLocal, navigate, setIsLoggedIn, fetchUser, handleOnLogout, userDetails} = useContext(userContext)
     const [blogs, setBlogs] = useState([])
     const [isLiked, toggleIsLiked] = useState(false)
     const [isDisliked, toggleIsDisliked] = useState(false)
@@ -12,8 +12,8 @@ const BlogState = ({children}) => {
     const [editBlogInput, setEditBlogInput] = useState({blogTitle:"", Blog:""})
     const [editing, setEditing] = useState(false)
     const [updatingId, setUpdatingId] = useState(null)
-    const [derivedComment, setDerivedComment] = useState("")
     const [searchInput, setSearchInput] = React.useState("")
+    const [trashedBlogs, setTrashedBlogs] = useState([])
 
     // fetch all blogs
     const fetchBlogs = async ()=>{
@@ -26,6 +26,7 @@ const BlogState = ({children}) => {
             }
         })
         const data = await resp.json();
+        if(data.status === 500) return handleOnLogout()
         const userId = data.userId
         const reactions = data.reactions
         
@@ -48,9 +49,9 @@ const BlogState = ({children}) => {
 
     const handleOnPostBlog = async()=>{
         const token = getFromLocal()
-        console.log(blogInput)
+        // console.log()
         try {
-            await axios.post("/blog/post", {
+            const resp = await axios.post("/blog/post", {
                 title:blogInput.blogTitle, content:blogInput.blog, images:blogInput.images
             }, {
                 headers:{
@@ -58,7 +59,7 @@ const BlogState = ({children}) => {
                     "authorization":"bearer "+token
                 }
             })
-           
+            
             navigate("/")
             fetchBlogs()
         } catch (error) {
@@ -169,6 +170,19 @@ const BlogState = ({children}) => {
     //     }
     // }
 
+    const setToTrash = async(id, userId)=>{
+        if(userId !== userDetails.id) return ;
+        const token = getFromLocal()
+    
+        const resp = await axios.patch("/blog/trash/"+id, undefined, {
+            headers:{
+                "Content-Type":"application/json",
+                "authorization":"bearer "+token
+            }
+        })
+        fetchBlogs()
+    }
+
 
     useEffect(()=>{
         if(getFromLocal()){
@@ -212,7 +226,8 @@ const BlogState = ({children}) => {
         searchInput,
         deleteComment,
         getFromLocal,
-        fetchBlogs
+        fetchBlogs,
+        setToTrash
       
       
     }

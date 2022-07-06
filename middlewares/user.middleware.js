@@ -4,17 +4,23 @@ require("dotenv").config()
 const jwt = require("jsonwebtoken")
 
 exports.verifyToken = (req, res, next)=>{
-    const auth = req.headers.authorization
-    if(!auth){
-        res.status(400).json({
-            status:"auth error", msg:"could not find token"
+    try {
+        const auth = req.headers.authorization
+        if(!auth){
+            res.status(401).json({
+                status:"unauthorized", msg:"could not find token"
+            })
+        }
+        const token = auth.split(" ")[1]
+        const decoded = jwt.verify(token, process.env.SECRET)
+        req.userValues = decoded
+        next()
+    } catch (error) {
+        
+        res.status(500).json({
+            status:500, msg:error.message
         })
     }
-
-    const token = auth.split(" ")[1]
-    const decoded = jwt.verify(token, process.env.SECRET)
-    req.userValues = decoded
-    next()
 }
 
 exports.confirmSelf = async(req, res, next)=>{

@@ -73,6 +73,7 @@ const UserState = ({children}) => {
             }
         })
         const userData = await resp.json()
+        if(userData.status === 500) return handleOnLogout()
         setUserDetails(userData)
     }
 

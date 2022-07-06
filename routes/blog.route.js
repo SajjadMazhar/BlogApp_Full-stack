@@ -1,23 +1,18 @@
 const { PrismaClient } = require("@prisma/client")
 const {blogUpload} = require("../middlewares/multer.middleware")
 const prisma = new PrismaClient()
-const { verifyToken, confirmSelf } = require("../middlewares/user.middleware")
+const { confirmSelf } = require("../middlewares/user.middleware")
 
 const router = require("express").Router()
 
 router.post("/post", blogUpload.single("images"), async(req, res)=>{
     const {title, content} = req.body
     console.log(req.file)
-    // const imgPaths = req.files.map(file=>{
-    //     return "/"+file.filename
-    // })
-    // return console.log(content)
     if(!(title&&content)){
         return res.status(400).json({
             status:"error", msg:"title and content is mandetory"
         })
     }
-
     try {
         const blog = await prisma.blog.create({
             data:{
@@ -129,6 +124,33 @@ router.patch("/post/:id", async(req, res)=>{
         res.json({
             status:"success", blog
         })
+    } catch (error) {
+        res.status(500).json({
+            status:"failed", error:error.message
+        })
+    }
+})
+
+router.patch("/trash/:blogId", async(req, res)=>{
+    const blogId = req.params.blogId;
+    try {
+        const trash = await prisma.blog.findUnique({
+            where:{
+                id:parseInt(blogId)
+            },
+            select:{
+                trashed:true
+            }
+        })
+        await prisma.blog.update({
+            where:{
+                id:parseInt(blogId)
+            },
+            data:{
+                trashed:trash.trashed?false:true
+            }
+        })
+        res.send({status:"done", trashed:!trash.trashed})
     } catch (error) {
         res.status(500).json({
             status:"failed", error:error.message

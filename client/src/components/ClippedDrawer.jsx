@@ -31,6 +31,7 @@ import SignUp from './pages/SignUp';
 import Saved from './pages/Saved';
 import MyBlogs from './pages/MyBlogs';
 import { Input } from '@mui/material';
+import Trash from './pages/Trash';
 
 const drawerWidth = 240;
 
@@ -128,6 +129,7 @@ export default function ClippedDrawer() {
                 <Route path="/newblog" element={<CreateBlog/>} />
                 <Route path="/saved" element={<Saved/>} />
                 <Route path="/yblogs" element={<MyBlogs/>} />
+                <Route path="/trash" element={<Trash/>} />
               </Routes>
       </div>
     </Box>
