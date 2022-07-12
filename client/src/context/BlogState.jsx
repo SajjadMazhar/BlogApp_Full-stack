@@ -170,8 +170,13 @@ const BlogState = ({children}) => {
     //     }
     // }
 
-    const setToTrash = async(id, userId)=>{
+    const setToTrash = async(id, userId, trashed)=>{
         if(userId !== userDetails.id) return ;
+        if(trashed === true){
+            deleteBlog(id, userId)
+            fetchBlogs()
+            return
+        }
         const token = getFromLocal()
     
         const resp = await axios.patch("/blog/trash/"+id, undefined, {

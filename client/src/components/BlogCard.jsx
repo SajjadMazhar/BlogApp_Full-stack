@@ -21,6 +21,7 @@ import blogContext from '../context/BlogContext';
 import userContext from '../context/UserContext';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarIcon from '@mui/icons-material/Star';
+import RestoreIcon from '@mui/icons-material/Restore';
 import { Button, Stack, TextField } from '@mui/material';
 import Comment from './Comment';
 import axios from 'axios';
@@ -79,24 +80,36 @@ export default function BlogCard({ blog }) {
           <>
             {userDetails.id === blog.userId ?
               <>
+              
                 {/* <IconButton aria-label="delete" onClick={() => deleteBlog(blog.id, blog.userId)}> */}
-                <IconButton aria-label="delete" onClick={() => setToTrash(blog.id, blog.userId)}>
+                  {blog.trashed&&
+                  <>
+                  <IconButton aria-label="restore" onClick={() => setToTrash(blog.id, blog.userId, "restore")}>
+                    <RestoreIcon/>
+                  </IconButton>
+                  <IconButton aria-label="delete" onClick={() => setToTrash(blog.id, blog.userId, blog.trashed)}>
                   <DeleteIcon color="error" />
-                </IconButton>
-                <IconButton aria-label="edit" onClick={() => toggleEditing(blog.id)}>
+                </IconButton> </>}
+                {!blog.trashed&&
+                <><IconButton aria-label="edit" onClick={() => toggleEditing(blog.id)}>
                   <EditIcon color="primary" />
                 </IconButton>
+                <IconButton aria-label="delete" onClick={() => setToTrash(blog.id, blog.userId, blog.trashed)}>
+                <DeleteIcon color="error" />
+              </IconButton></>
+                }
               </>
               : ""
             }
             {
-              blog.saved ?
+              blog.trashed? "":(
+              blog.saved?
                 <IconButton aria-label="saved" onClick={() => toggleSaveBlog(blog.id)}>
                   <StarIcon color="warning" />
                 </IconButton> :
                 <IconButton aria-label="unsaved" onClick={() => toggleSaveBlog(blog.id)}>
                   <StarBorderIcon color="warning" />
-                </IconButton>
+                </IconButton>)
             }
           </>
         }
@@ -118,15 +131,18 @@ export default function BlogCard({ blog }) {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="like" onClick={() => reactOnBlog(blog.id, "liked")}>
-          {blog.liked ? <ThumbUpAltIcon /> : <ThumbUpOffAltIcon />}
-          <Typography sx={{ m: 1 }}>{blog.likes}</Typography>
-        </IconButton>
-        <IconButton aria-label="dislike" onClick={() => reactOnBlog(blog.id, "disliked")}>
-          {blog.disliked ? <ThumbDownAltIcon /> : <ThumbDownOffAltIcon />}
-          <Typography sx={{ m: 1 }}>{blog.dislikes}</Typography>
-
-        </IconButton>
+        {blog.trashed? "" : 
+          <>
+            <IconButton aria-label="like" onClick={() => reactOnBlog(blog.id, "liked")}>
+              {blog.liked ? <ThumbUpAltIcon /> : <ThumbUpOffAltIcon />}
+              <Typography sx={{ m: 1 }}>{blog.likes}</Typography>
+            </IconButton>
+            <IconButton aria-label="dislike" onClick={() => reactOnBlog(blog.id, "disliked")}>
+              {blog.disliked ? <ThumbDownAltIcon /> : <ThumbDownOffAltIcon />}
+              <Typography sx={{ m: 1 }}>{blog.dislikes}</Typography>
+            </IconButton>
+          </>
+        }
         <ExpandMore
           expand={expanded}
           onClick={handleExpandClick}
